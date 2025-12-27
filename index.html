@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Expense Tracker</title>
+
+    <!-- Simple CSS for styling -->
+    <style>
+        body {
+            font-family: Arial, sans-serif; /* simple font */
+            background-color: #f2f2f2;
+            padding: 20px;
+        }
+
+        .box {
+            background-color: white;
+            padding: 20px;
+            width: 300px;
+            border-radius: 5px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 10px;
+        }
+
+        button {
+            width: 100%;
+            padding: 8px;
+            margin-top: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        ul {
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="box">
+        <h1>My Expense Tracker</h1>
+
+        <!-- Input box to type expense -->
+        <input type="text" id="expenseInput" placeholder="Enter expense">
+
+        <!-- Button to add expense -->
+        <button onclick="addExpense()">Add Expense</button>
+
+        <!-- List to show expenses -->
+        <ul id="expenseList"></ul>
+    </div>
+
+    <!-- Very simple JavaScript -->
+    <script>
+        function addExpense() {
+            // Get the value from input box
+            var expense = document.getElementById("expenseInput").value;
+
+            // If input is empty, do nothing
+            if (expense === "") {
+                return;
+            }
+
+            // Create a new list item
+            var li = document.createElement("li");
+            li.innerText = expense;
+
+            // Add the item to the list
+            document.getElementById("expenseList").appendChild(li);
+
+            // Clear the input box
+            document.getElementById("expenseInput").value = "";
+        }
+    </script>
+
+</body>
+</html>
