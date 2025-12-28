@@ -35,3 +35,11 @@ Users can set monthly budget per category
 System calculates total expense per category
 A progress bar visually shows budget usage
 Progress updates automatically when new expenses are added
+
+# Phase-5 adds:
+
+A Transaction History section
+Combines expenses and income
+Shows clear labels (Expense / Income)
+Allows basic filtering
+Uses only arrays, loops, and DOM

@@ -5,17 +5,17 @@
 
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f2f2f2;
+            font-family: Arial;
+            background: #f2f2f2;
             padding: 20px;
         }
 
         .box {
-            background-color: white;
+            background: white;
             padding: 20px;
-            width: 400px;
-            border-radius: 5px;
+            width: 420px;
             margin-bottom: 20px;
+            border-radius: 5px;
         }
 
         h1, h2 {
@@ -32,20 +32,27 @@
             margin-top: 10px;
         }
 
-        /* Progress bar */
-        .progress-container {
+        /* bar */
+        .bar-box {
             background: #ddd;
-            width: 100%;
             height: 15px;
             border-radius: 5px;
             margin-top: 5px;
         }
 
-        .progress-bar {
+        .bar {
             background: #4CAF50;
             height: 100%;
             width: 0%;
             border-radius: 5px;
+        }
+
+        .exp {
+            color: red;
+        }
+
+        .inc {
+            color: green;
         }
     </style>
 </head>
@@ -54,176 +61,203 @@
 
 <h1>Personal Finance Tracker</h1>
 
-<!--  EXPENSE  -->
+<!-- EXPENSE -->
 <div class="box">
-    <h2>Expense Tracker</h2>
+    <h2>Expense</h2>
 
-    <input type="number" id="expenseAmount" placeholder="Expense amount">
+    <input type="number" id="eAmt" placeholder="Amount">
 
-    <select id="expenseCategory">
-        <option value="">Select category</option>
+    <select id="eCat">
+        <option value="">Category</option>
         <option>Food</option>
         <option>Transport</option>
         <option>Shopping</option>
         <option>Other</option>
     </select>
 
-    <input type="date" id="expenseDate">
-    <input type="text" id="expenseDesc" placeholder="Description (optional)">
+    <input type="date" id="eDate">
+    <input type="text" id="eDesc" placeholder="Note (optional)">
 
-    <button onclick="addExpense()">Add Expense</button>
+    <button onclick="addExp()">Add Expense</button>
 
-    <ul id="expenseList"></ul>
+    <ul id="eList"></ul>
 </div>
 
 <!-- INCOME -->
 <div class="box">
-    <h2>Income Manager</h2>
+    <h2>Income</h2>
 
-    <input type="number" id="incomeAmount" placeholder="Income amount">
-    <input type="text" id="incomeSource" placeholder="Income source">
+    <input type="number" id="iAmt" placeholder="Amount">
+    <input type="text" id="iSrc" placeholder="Source">
 
-    <select id="incomeFrequency">
-        <option value="">Select frequency</option>
+    <select id="iFreq">
+        <option value="">Frequency</option>
         <option>Monthly</option>
         <option>Weekly</option>
         <option>One-time</option>
     </select>
 
-    <button onclick="addIncome()">Add Income</button>
+    <button onclick="addInc()">Add Income</button>
 
-    <ul id="incomeList"></ul>
+    <ul id="iList"></ul>
 </div>
 
-
+<!-- BUDGET -->
 <div class="box">
-    <h2>Budget Tracker</h2>
+    <h2>Budget</h2>
 
-    <select id="budgetCategory">
-        <option value="">Select category</option>
+    <select id="bCat">
+        <option value="">Category</option>
         <option>Food</option>
         <option>Transport</option>
         <option>Shopping</option>
         <option>Other</option>
     </select>
 
-    <input type="number" id="budgetAmount" placeholder="Monthly budget">
+    <input type="number" id="bAmt" placeholder="Monthly budget">
 
-    <button onclick="setBudget()">Set Budget</button>
+    <button onclick="setBud()">Set Budget</button>
 
-    <div id="budgetStatus"></div>
+    <div id="bStatus"></div>
+</div>
+
+<!-- PHASE 5 : HISTORY -->
+<div class="box">
+    <h2>History</h2>
+
+    <select id="fType" onchange="showHist()">
+        <option value="all">All</option>
+        <option value="exp">Expense</option>
+        <option value="inc">Income</option>
+    </select>
+
+    <ul id="hList"></ul>
 </div>
 
 <script>
-    /* EXPENSE  */
-    var expenses = [];
+    // data
+    var exp = [];
+    var inc = [];
+    var bud = {};
 
-    function addExpense() {
-        var amount = Number(document.getElementById("expenseAmount").value);
-        var category = document.getElementById("expenseCategory").value;
-        var date = document.getElementById("expenseDate").value;
-        var desc = document.getElementById("expenseDesc").value;
+    // add expense
+    function addExp() {
+        var a = Number(eAmt.value);
+        var c = eCat.value;
+        var d = eDate.value;
 
-        if (amount === 0 || category === "" || date === "") {
-            alert("Please fill all expense fields");
+        if (a == 0 || c == "" || d == "") {
+            alert("Fill expense");
             return;
         }
 
-        expenses.push({ amount, category, date, desc });
-        displayExpenses();
-        updateBudgetProgress();
+        exp.push({ a, c, d });
+        showExp();
+        updBud();
+        showHist();
 
-        document.getElementById("expenseAmount").value = "";
-        document.getElementById("expenseCategory").value = "";
-        document.getElementById("expenseDate").value = "";
-        document.getElementById("expenseDesc").value = "";
+        eAmt.value = "";
+        eCat.value = "";
+        eDate.value = "";
+        eDesc.value = "";
     }
 
-    function displayExpenses() {
-        var list = document.getElementById("expenseList");
-        list.innerHTML = "";
-
-        for (var i = 0; i < expenses.length; i++) {
+    // show expense
+    function showExp() {
+        eList.innerHTML = "";
+        for (var i = 0; i < exp.length; i++) {
             var li = document.createElement("li");
-            li.innerText =
-                expenses[i].date + " | " +
-                expenses[i].category + " | ₹" +
-                expenses[i].amount;
-            list.appendChild(li);
+            li.innerText = exp[i].d + " | " + exp[i].c + " | ₹" + exp[i].a;
+            eList.appendChild(li);
         }
     }
 
-    /* INCOME  */
-    var incomes = [];
+    // add income
+    function addInc() {
+        var a = iAmt.value;
+        var s = iSrc.value;
+        var f = iFreq.value;
 
-    function addIncome() {
-        var amount = document.getElementById("incomeAmount").value;
-        var source = document.getElementById("incomeSource").value;
-        var frequency = document.getElementById("incomeFrequency").value;
-
-        if (amount === "" || source === "" || frequency === "") {
-            alert("Please fill all income fields");
+        if (a == "" || s == "" || f == "") {
+            alert("Fill income");
             return;
         }
 
-        incomes.push({ amount, source, frequency });
-        displayIncome();
+        inc.push({ a, s, f });
+        showInc();
+        showHist();
 
-        document.getElementById("incomeAmount").value = "";
-        document.getElementById("incomeSource").value = "";
-        document.getElementById("incomeFrequency").value = "";
+        iAmt.value = "";
+        iSrc.value = "";
+        iFreq.value = "";
     }
 
-    function displayIncome() {
-        var list = document.getElementById("incomeList");
-        list.innerHTML = "";
-
-        for (var i = 0; i < incomes.length; i++) {
+    // show income
+    function showInc() {
+        iList.innerHTML = "";
+        for (var i = 0; i < inc.length; i++) {
             var li = document.createElement("li");
-            li.innerText =
-                incomes[i].source + " | ₹" +
-                incomes[i].amount + " | " +
-                incomes[i].frequency;
-            list.appendChild(li);
+            li.innerText = inc[i].s + " | ₹" + inc[i].a + " | " + inc[i].f;
+            iList.appendChild(li);
         }
     }
 
-    /* PHASE-4: BUDGET  */
-    var budgets = {};
+    // set budget
+    function setBud() {
+        var c = bCat.value;
+        var a = Number(bAmt.value);
 
-    function setBudget() {
-        var category = document.getElementById("budgetCategory").value;
-        var amount = Number(document.getElementById("budgetAmount").value);
-
-        if (category === "" || amount === 0) {
-            alert("Please select category and enter budget");
+        if (c == "" || a == 0) {
+            alert("Fill budget");
             return;
         }
 
-        budgets[category] = amount;
-        updateBudgetProgress();
+        bud[c] = a;
+        updBud();
     }
 
-    function updateBudgetProgress() {
-        var statusDiv = document.getElementById("budgetStatus");
-        statusDiv.innerHTML = "";
+    // update budget
+    function updBud() {
+        bStatus.innerHTML = "";
 
-        for (var category in budgets) {
-            var spent = 0;
+        for (var c in bud) {
+            var sp = 0;
 
-            for (var i = 0; i < expenses.length; i++) {
-                if (expenses[i].category === category) {
-                    spent += expenses[i].amount;
+            for (var i = 0; i < exp.length; i++) {
+                if (exp[i].c == c) {
+                    sp += exp[i].a;
                 }
             }
 
-            var percent = Math.min((spent / budgets[category]) * 100, 100);
+            var per = Math.min((sp / bud[c]) * 100, 100);
 
-            statusDiv.innerHTML +=
-                "<p>" + category + ": ₹" + spent + " / ₹" + budgets[category] + "</p>" +
-                "<div class='progress-container'>" +
-                "<div class='progress-bar' style='width:" + percent + "%'></div>" +
-                "</div>";
+            bStatus.innerHTML +=
+                "<p>" + c + " : ₹" + sp + " / ₹" + bud[c] + "</p>" +
+                "<div class='bar-box'><div class='bar' style='width:" + per + "%'></div></div>";
+        }
+    }
+
+    // PHASE 5
+    function showHist() {
+        hList.innerHTML = "";
+        var f = fType.value;
+
+        if (f == "all" || f == "exp") {
+            for (var i = 0; i < exp.length; i++) {
+                var li = document.createElement("li");
+                li.className = "exp";
+                li.innerText = "Expense | " + exp[i].c + " | ₹" + exp[i].a;
+                hList.appendChild(li);
+            }
+        }
+
+        if (f == "all" || f == "inc") {
+            for (var j = 0; j < inc.length; j++) {
+                var li2 = document.createElement("li");
+                li2.className = "inc";
+                li2.innerText = "Income | " + inc[j].s + " | ₹" + inc[j].a;
+                hList.appendChild(li2);
+            }
         }
     }
 </script>
