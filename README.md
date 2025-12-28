@@ -22,3 +22,10 @@ Optional description
 Expenses stored using JavaScript arrays and objects
 Display of all recorded expenses
 
+# Phase-3 adds:
+Features: 
+
+New Income Manager section
+Income stored in incomes[] array
+Each income is an object
+Frequency support (monthly / weekly / one-time)

@@ -3,7 +3,6 @@
 <head>
     <title>Personal Finance Tracker</title>
 
-    <!-- Basic CSS (same level as Phase-1, just a bit extended) -->
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -14,36 +13,38 @@
         .box {
             background-color: white;
             padding: 20px;
-            width: 350px;
+            width: 380px;
             border-radius: 5px;
+            margin-bottom: 20px;
         }
 
-        h1 {
+        h1, h2 {
             text-align: center;
         }
 
         input, select, button {
             width: 100%;
             padding: 8px;
-            margin-top: 10px;
+            margin-top: 8px;
         }
 
         ul {
-            margin-top: 15px;
+            margin-top: 10px;
         }
     </style>
 </head>
 
 <body>
 
+<h1>Personal Finance Tracker</h1>
+
+<!-- ================= EXPENSE SECTION ================= -->
 <div class="box">
-    <h1>Expense Tracker</h1>
+    <h2>Expense Tracker</h2>
 
-    <!-- Amount -->
-    <input type="number" id="amount" placeholder="Enter amount">
+    <input type="number" id="expenseAmount" placeholder="Expense amount">
 
-    <!-- Category -->
-    <select id="category">
+    <select id="expenseCategory">
         <option value="">Select category</option>
         <option>Food</option>
         <option>Transport</option>
@@ -51,54 +52,62 @@
         <option>Other</option>
     </select>
 
-    <!-- Date -->
-    <input type="date" id="date">
+    <input type="date" id="expenseDate">
+    <input type="text" id="expenseDesc" placeholder="Description (optional)">
 
-    <!-- Description -->
-    <input type="text" id="description" placeholder="Description (optional)">
-
-    <!-- Button -->
     <button onclick="addExpense()">Add Expense</button>
 
-    <!-- Expense list -->
     <ul id="expenseList"></ul>
 </div>
 
+<!-- ================= INCOME SECTION ================= -->
+<div class="box">
+    <h2>Income Manager</h2>
+
+    <input type="number" id="incomeAmount" placeholder="Income amount">
+
+    <input type="text" id="incomeSource" placeholder="Income source (Salary, Freelance)">
+
+    <select id="incomeFrequency">
+        <option value="">Select frequency</option>
+        <option>Monthly</option>
+        <option>Weekly</option>
+        <option>One-time</option>
+    </select>
+
+    <button onclick="addIncome()">Add Income</button>
+
+    <ul id="incomeList"></ul>
+</div>
+
 <script>
-    // Array to store all expenses (Phase-2 concept)
+    /* ================= PHASE-2: EXPENSE ================= */
     var expenses = [];
 
     function addExpense() {
-        var amount = document.getElementById("amount").value;
-        var category = document.getElementById("category").value;
-        var date = document.getElementById("date").value;
-        var description = document.getElementById("description").value;
+        var amount = document.getElementById("expenseAmount").value;
+        var category = document.getElementById("expenseCategory").value;
+        var date = document.getElementById("expenseDate").value;
+        var desc = document.getElementById("expenseDesc").value;
 
-        // Simple validation
         if (amount === "" || category === "" || date === "") {
-            alert("Please fill all required fields");
+            alert("Please fill all expense fields");
             return;
         }
 
-        // Expense object
-        var expense = {
+        expenses.push({
             amount: amount,
             category: category,
             date: date,
-            description: description
-        };
+            desc: desc
+        });
 
-        // Save expense
-        expenses.push(expense);
-
-        // Show expenses
         displayExpenses();
 
-        // Clear inputs
-        document.getElementById("amount").value = "";
-        document.getElementById("category").value = "";
-        document.getElementById("date").value = "";
-        document.getElementById("description").value = "";
+        document.getElementById("expenseAmount").value = "";
+        document.getElementById("expenseCategory").value = "";
+        document.getElementById("expenseDate").value = "";
+        document.getElementById("expenseDesc").value = "";
     }
 
     function displayExpenses() {
@@ -111,7 +120,48 @@
                 expenses[i].date + " | " +
                 expenses[i].category + " | ₹" +
                 expenses[i].amount + " | " +
-                expenses[i].description;
+                expenses[i].desc;
+
+            list.appendChild(li);
+        }
+    }
+
+    /* ================= PHASE-3: INCOME ================= */
+    var incomes = [];
+
+    function addIncome() {
+        var amount = document.getElementById("incomeAmount").value;
+        var source = document.getElementById("incomeSource").value;
+        var frequency = document.getElementById("incomeFrequency").value;
+
+        if (amount === "" || source === "" || frequency === "") {
+            alert("Please fill all income fields");
+            return;
+        }
+
+        incomes.push({
+            amount: amount,
+            source: source,
+            frequency: frequency
+        });
+
+        displayIncome();
+
+        document.getElementById("incomeAmount").value = "";
+        document.getElementById("incomeSource").value = "";
+        document.getElementById("incomeFrequency").value = "";
+    }
+
+    function displayIncome() {
+        var list = document.getElementById("incomeList");
+        list.innerHTML = "";
+
+        for (var i = 0; i < incomes.length; i++) {
+            var li = document.createElement("li");
+            li.innerText =
+                incomes[i].source + " | ₹" +
+                incomes[i].amount + " | " +
+                incomes[i].frequency;
 
             list.appendChild(li);
         }
