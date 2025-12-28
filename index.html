@@ -13,7 +13,7 @@
         .box {
             background-color: white;
             padding: 20px;
-            width: 380px;
+            width: 400px;
             border-radius: 5px;
             margin-bottom: 20px;
         }
@@ -31,6 +31,22 @@
         ul {
             margin-top: 10px;
         }
+
+        /* Progress bar */
+        .progress-container {
+            background: #ddd;
+            width: 100%;
+            height: 15px;
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+
+        .progress-bar {
+            background: #4CAF50;
+            height: 100%;
+            width: 0%;
+            border-radius: 5px;
+        }
     </style>
 </head>
 
@@ -38,7 +54,7 @@
 
 <h1>Personal Finance Tracker</h1>
 
-<!-- ================= EXPENSE SECTION ================= -->
+<!--  EXPENSE  -->
 <div class="box">
     <h2>Expense Tracker</h2>
 
@@ -60,13 +76,12 @@
     <ul id="expenseList"></ul>
 </div>
 
-<!-- ================= INCOME SECTION ================= -->
+<!-- INCOME -->
 <div class="box">
     <h2>Income Manager</h2>
 
     <input type="number" id="incomeAmount" placeholder="Income amount">
-
-    <input type="text" id="incomeSource" placeholder="Income source (Salary, Freelance)">
+    <input type="text" id="incomeSource" placeholder="Income source">
 
     <select id="incomeFrequency">
         <option value="">Select frequency</option>
@@ -80,29 +95,43 @@
     <ul id="incomeList"></ul>
 </div>
 
+
+<div class="box">
+    <h2>Budget Tracker</h2>
+
+    <select id="budgetCategory">
+        <option value="">Select category</option>
+        <option>Food</option>
+        <option>Transport</option>
+        <option>Shopping</option>
+        <option>Other</option>
+    </select>
+
+    <input type="number" id="budgetAmount" placeholder="Monthly budget">
+
+    <button onclick="setBudget()">Set Budget</button>
+
+    <div id="budgetStatus"></div>
+</div>
+
 <script>
-    /* ================= PHASE-2: EXPENSE ================= */
+    /* EXPENSE  */
     var expenses = [];
 
     function addExpense() {
-        var amount = document.getElementById("expenseAmount").value;
+        var amount = Number(document.getElementById("expenseAmount").value);
         var category = document.getElementById("expenseCategory").value;
         var date = document.getElementById("expenseDate").value;
         var desc = document.getElementById("expenseDesc").value;
 
-        if (amount === "" || category === "" || date === "") {
+        if (amount === 0 || category === "" || date === "") {
             alert("Please fill all expense fields");
             return;
         }
 
-        expenses.push({
-            amount: amount,
-            category: category,
-            date: date,
-            desc: desc
-        });
-
+        expenses.push({ amount, category, date, desc });
         displayExpenses();
+        updateBudgetProgress();
 
         document.getElementById("expenseAmount").value = "";
         document.getElementById("expenseCategory").value = "";
@@ -119,14 +148,12 @@
             li.innerText =
                 expenses[i].date + " | " +
                 expenses[i].category + " | ₹" +
-                expenses[i].amount + " | " +
-                expenses[i].desc;
-
+                expenses[i].amount;
             list.appendChild(li);
         }
     }
 
-    /* ================= PHASE-3: INCOME ================= */
+    /* INCOME  */
     var incomes = [];
 
     function addIncome() {
@@ -139,12 +166,7 @@
             return;
         }
 
-        incomes.push({
-            amount: amount,
-            source: source,
-            frequency: frequency
-        });
-
+        incomes.push({ amount, source, frequency });
         displayIncome();
 
         document.getElementById("incomeAmount").value = "";
@@ -162,8 +184,46 @@
                 incomes[i].source + " | ₹" +
                 incomes[i].amount + " | " +
                 incomes[i].frequency;
-
             list.appendChild(li);
+        }
+    }
+
+    /* PHASE-4: BUDGET  */
+    var budgets = {};
+
+    function setBudget() {
+        var category = document.getElementById("budgetCategory").value;
+        var amount = Number(document.getElementById("budgetAmount").value);
+
+        if (category === "" || amount === 0) {
+            alert("Please select category and enter budget");
+            return;
+        }
+
+        budgets[category] = amount;
+        updateBudgetProgress();
+    }
+
+    function updateBudgetProgress() {
+        var statusDiv = document.getElementById("budgetStatus");
+        statusDiv.innerHTML = "";
+
+        for (var category in budgets) {
+            var spent = 0;
+
+            for (var i = 0; i < expenses.length; i++) {
+                if (expenses[i].category === category) {
+                    spent += expenses[i].amount;
+                }
+            }
+
+            var percent = Math.min((spent / budgets[category]) * 100, 100);
+
+            statusDiv.innerHTML +=
+                "<p>" + category + ": ₹" + spent + " / ₹" + budgets[category] + "</p>" +
+                "<div class='progress-container'>" +
+                "<div class='progress-bar' style='width:" + percent + "%'></div>" +
+                "</div>";
         }
     }
 </script>

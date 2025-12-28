@@ -29,3 +29,9 @@ New Income Manager section
 Income stored in incomes[] array
 Each income is an object
 Frequency support (monthly / weekly / one-time)
+
+# Phase-4 
+Users can set monthly budget per category
+System calculates total expense per category
+A progress bar visually shows budget usage
+Progress updates automatically when new expenses are added
