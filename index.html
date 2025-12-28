@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>My Expense Tracker</title>
+    <title>Personal Finance Tracker</title>
 
-    <!-- Simple CSS for styling -->
+    <!-- Basic CSS (same level as Phase-1, just a bit extended) -->
     <style>
         body {
-            font-family: Arial, sans-serif; /* simple font */
+            font-family: Arial, sans-serif;
             background-color: #f2f2f2;
             padding: 20px;
         }
@@ -14,7 +14,7 @@
         .box {
             background-color: white;
             padding: 20px;
-            width: 300px;
+            width: 350px;
             border-radius: 5px;
         }
 
@@ -22,20 +22,10 @@
             text-align: center;
         }
 
-        input {
+        input, select, button {
             width: 100%;
             padding: 8px;
             margin-top: 10px;
-        }
-
-        button {
-            width: 100%;
-            padding: 8px;
-            margin-top: 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
         }
 
         ul {
@@ -46,41 +36,87 @@
 
 <body>
 
-    <div class="box">
-        <h1>My Expense Tracker</h1>
+<div class="box">
+    <h1>Expense Tracker</h1>
 
-        <!-- Input box to type expense -->
-        <input type="text" id="expenseInput" placeholder="Enter expense">
+    <!-- Amount -->
+    <input type="number" id="amount" placeholder="Enter amount">
 
-        <!-- Button to add expense -->
-        <button onclick="addExpense()">Add Expense</button>
+    <!-- Category -->
+    <select id="category">
+        <option value="">Select category</option>
+        <option>Food</option>
+        <option>Transport</option>
+        <option>Shopping</option>
+        <option>Other</option>
+    </select>
 
-        <!-- List to show expenses -->
-        <ul id="expenseList"></ul>
-    </div>
+    <!-- Date -->
+    <input type="date" id="date">
 
-    <!-- Very simple JavaScript -->
-    <script>
-        function addExpense() {
-            // Get the value from input box
-            var expense = document.getElementById("expenseInput").value;
+    <!-- Description -->
+    <input type="text" id="description" placeholder="Description (optional)">
 
-            // If input is empty, do nothing
-            if (expense === "") {
-                return;
-            }
+    <!-- Button -->
+    <button onclick="addExpense()">Add Expense</button>
 
-            // Create a new list item
-            var li = document.createElement("li");
-            li.innerText = expense;
+    <!-- Expense list -->
+    <ul id="expenseList"></ul>
+</div>
 
-            // Add the item to the list
-            document.getElementById("expenseList").appendChild(li);
+<script>
+    // Array to store all expenses (Phase-2 concept)
+    var expenses = [];
 
-            // Clear the input box
-            document.getElementById("expenseInput").value = "";
+    function addExpense() {
+        var amount = document.getElementById("amount").value;
+        var category = document.getElementById("category").value;
+        var date = document.getElementById("date").value;
+        var description = document.getElementById("description").value;
+
+        // Simple validation
+        if (amount === "" || category === "" || date === "") {
+            alert("Please fill all required fields");
+            return;
         }
-    </script>
+
+        // Expense object
+        var expense = {
+            amount: amount,
+            category: category,
+            date: date,
+            description: description
+        };
+
+        // Save expense
+        expenses.push(expense);
+
+        // Show expenses
+        displayExpenses();
+
+        // Clear inputs
+        document.getElementById("amount").value = "";
+        document.getElementById("category").value = "";
+        document.getElementById("date").value = "";
+        document.getElementById("description").value = "";
+    }
+
+    function displayExpenses() {
+        var list = document.getElementById("expenseList");
+        list.innerHTML = "";
+
+        for (var i = 0; i < expenses.length; i++) {
+            var li = document.createElement("li");
+            li.innerText =
+                expenses[i].date + " | " +
+                expenses[i].category + " | ₹" +
+                expenses[i].amount + " | " +
+                expenses[i].description;
+
+            list.appendChild(li);
+        }
+    }
+</script>
 
 </body>
 </html>
