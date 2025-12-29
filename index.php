@@ -1,3 +1,13 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit();
+}
+
+$username = $_SESSION['username'];
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,60 +16,155 @@
     <style>
         body {
             font-family: Arial;
-            background: #f2f2f2;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             padding: 20px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .welcome {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .welcome p {
+            margin: 0;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .logout-btn {
+            background: #e74c3c;
+            color: white;
+            padding: 8px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            float: right;
+            font-size: 14px;
+        }
+
+        .logout-btn:hover {
+            background: #c0392b;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin: 20px 0;
+            font-size: 32px;
         }
 
         .box {
             background: white;
-            padding: 20px;
-            width: 420px;
+            padding: 25px;
             margin-bottom: 20px;
-            border-radius: 5px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
-        h1, h2 {
+        h2 {
             text-align: center;
+            color: #667eea;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 24px;
         }
 
-        input, select, button {
+        input, select {
             width: 100%;
-            padding: 8px;
-            margin-top: 8px;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background: #5568d3;
         }
 
         ul {
-            margin-top: 10px;
+            list-style: none;
+            padding: 0;
+            margin-top: 15px;
         }
 
-        /* bar */
-        .bar-box {
-            background: #ddd;
-            height: 15px;
+        ul li {
+            padding: 10px;
+            margin-top: 8px;
+            background: #f8f9fa;
             border-radius: 5px;
-            margin-top: 5px;
+            border-left: 3px solid #667eea;
+        }
+
+        .bar-box {
+            background: #e9ecef;
+            height: 20px;
+            border-radius: 10px;
+            margin-top: 8px;
+            overflow: hidden;
         }
 
         .bar {
-            background: #4CAF50;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
             height: 100%;
             width: 0%;
-            border-radius: 5px;
+            border-radius: 10px;
+            transition: width 0.3s;
         }
 
         .exp {
-            color: red;
+            color: #e74c3c;
+            font-weight: bold;
         }
 
         .inc {
-            color: green;
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        #bStatus p {
+            margin: 15px 0 5px 0;
+            color: #333;
+            font-weight: bold;
         }
     </style>
 </head>
 
 <body>
 
-<h1>Personal Finance Tracker</h1>
+<div class="container">
+    <div class="welcome">
+        <p>Welcome, <?php echo $username; ?>! <button class="logout-btn" onclick="location.href='logout.php'">Logout</button></p>
+    </div>
+
+    <h1>Personal Finance Tracker</h1>
 
 <!-- EXPENSE -->
 <div class="box">
@@ -262,5 +367,6 @@
     }
 </script>
 
+</div>
 </body>
 </html>
