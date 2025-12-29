@@ -240,131 +240,158 @@ $username = $_SESSION['username'];
 </div>
 
 <script>
-    // data
-    var exp = [];
-    var inc = [];
-    var bud = {};
-
-    // add expense
     function addExp() {
         var a = Number(eAmt.value);
         var c = eCat.value;
         var d = eDate.value;
+        var desc = eDesc.value;
 
         if (a == 0 || c == "" || d == "") {
-            alert("Fill expense");
+            alert("Fill all fields");
             return;
         }
 
-        exp.push({ a, c, d });
-        showExp();
-        updBud();
-        showHist();
+        var form = new FormData();
+        form.append('type', 'expense');
+        form.append('category', c);
+        form.append('amount', a);
+        form.append('date', d);
+        form.append('description', desc);
 
-        eAmt.value = "";
-        eCat.value = "";
-        eDate.value = "";
-        eDesc.value = "";
+        fetch('add_transaction.php', {
+            method: 'POST',
+            body: form
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                eAmt.value = "";
+                eCat.value = "";
+                eDate.value = "";
+                eDesc.value = "";
+                loadData();
+            } else {
+                alert("Failed to add expense");
+            }
+        });
     }
 
-    // show expense
-    function showExp() {
-        eList.innerHTML = "";
-        for (var i = 0; i < exp.length; i++) {
-            var li = document.createElement("li");
-            li.innerText = exp[i].d + " | " + exp[i].c + " | ₹" + exp[i].a;
-            eList.appendChild(li);
-        }
-    }
-
-    // add income
     function addInc() {
-        var a = iAmt.value;
+        var a = Number(iAmt.value);
         var s = iSrc.value;
         var f = iFreq.value;
 
-        if (a == "" || s == "" || f == "") {
-            alert("Fill income");
+        if (a == 0 || s == "" || f == "") {
+            alert("Fill all fields");
             return;
         }
 
-        inc.push({ a, s, f });
-        showInc();
-        showHist();
+        var form = new FormData();
+        form.append('type', 'income');
+        form.append('category', s);
+        form.append('amount', a);
+        form.append('date', new Date().toISOString().split('T')[0]);
+        form.append('frequency', f);
 
-        iAmt.value = "";
-        iSrc.value = "";
-        iFreq.value = "";
+        fetch('add_transaction.php', {
+            method: 'POST',
+            body: form
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                iAmt.value = "";
+                iSrc.value = "";
+                iFreq.value = "";
+                loadData();
+            } else {
+                alert("Failed to add income");
+            }
+        });
     }
 
-    // show income
-    function showInc() {
-        iList.innerHTML = "";
-        for (var i = 0; i < inc.length; i++) {
-            var li = document.createElement("li");
-            li.innerText = inc[i].s + " | ₹" + inc[i].a + " | " + inc[i].f;
-            iList.appendChild(li);
-        }
-    }
-
-    // set budget
     function setBud() {
         var c = bCat.value;
         var a = Number(bAmt.value);
 
         if (c == "" || a == 0) {
-            alert("Fill budget");
+            alert("Fill all fields");
             return;
         }
 
-        bud[c] = a;
-        updBud();
-    }
+        var form = new FormData();
+        form.append('category', c);
+        form.append('amount', a);
 
-    // update budget
-    function updBud() {
-        bStatus.innerHTML = "";
-
-        for (var c in bud) {
-            var sp = 0;
-
-            for (var i = 0; i < exp.length; i++) {
-                if (exp[i].c == c) {
-                    sp += exp[i].a;
-                }
+        fetch('set_budget.php', {
+            method: 'POST',
+            body: form
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                bCat.value = "";
+                bAmt.value = "";
+                loadBudgets();
             }
-
-            var per = Math.min((sp / bud[c]) * 100, 100);
-
-            bStatus.innerHTML +=
-                "<p>" + c + " : ₹" + sp + " / ₹" + bud[c] + "</p>" +
-                "<div class='bar-box'><div class='bar' style='width:" + per + "%'></div></div>";
-        }
+        });
     }
 
-    // PHASE 5
-    function showHist() {
+    function loadData() {
+        fetch('get_transactions.php?type=' + fType.value)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                displayTransactions(data.data);
+            }
+        });
+        
+        loadBudgets();
+    }
+
+    function displayTransactions(transactions) {
         hList.innerHTML = "";
-        var f = fType.value;
+        eList.innerHTML = "";
+        iList.innerHTML = "";
 
-        if (f == "all" || f == "exp") {
-            for (var i = 0; i < exp.length; i++) {
-                var li = document.createElement("li");
+        transactions.forEach(function(t) {
+            var li = document.createElement("li");
+            
+            if (t.type == 'expense') {
                 li.className = "exp";
-                li.innerText = "Expense | " + exp[i].c + " | ₹" + exp[i].a;
-                hList.appendChild(li);
+                li.innerText = "Expense | " + t.date + " | " + t.category + " | ₹" + t.amount;
+                hList.appendChild(li.cloneNode(true));
+                eList.appendChild(li);
+            } else {
+                li.className = "inc";
+                li.innerText = "Income | " + t.date + " | " + t.category + " | ₹" + t.amount;
+                hList.appendChild(li.cloneNode(true));
+                iList.appendChild(li);
             }
-        }
-
-        if (f == "all" || f == "inc") {
-            for (var j = 0; j < inc.length; j++) {
-                var li2 = document.createElement("li");
-                li2.className = "inc";
-                li2.innerText = "Income | " + inc[j].s + " | ₹" + inc[j].a;
-                hList.appendChild(li2);
-            }
-        }
+        });
     }
+
+    function loadBudgets() {
+        fetch('get_budgets.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                bStatus.innerHTML = "";
+                data.data.forEach(function(b) {
+                    var per = Math.min((b.spent / b.budget) * 100, 100);
+                    bStatus.innerHTML += 
+                        "<p>" + b.category + " : ₹" + b.spent + " / ₹" + b.budget + "</p>" +
+                        "<div class='bar-box'><div class='bar' style='width:" + per + "%'></div></div>";
+                });
+            }
+        });
+    }
+
+    function showHist() {
+        loadData();
+    }
+
+    loadData();
 </script>
 
 </div>
